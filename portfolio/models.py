@@ -73,3 +73,30 @@ class Stock(models.Model):
 
     def cust_number(self):
         return self.customer.cust_number
+
+
+class Fund(models.Model):
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='funds')
+    category = models.CharField(max_length=50)
+    fund_name = models.CharField(max_length=200)
+    fund_acquired_value = models.DecimalField(max_digits=10, decimal_places=2)
+    fund_acquired_date = models.DateField(default=timezone.now)
+    fund_recent_value = models.DecimalField(max_digits=10, decimal_places=2)
+    fund_recent_date = models.DateField(default=timezone.now, blank=True, null=True)
+
+    def created(self):
+        self.fund_recent_date = timezone.now()
+        self.save()
+
+    def updated(self):
+        self.fund_recent_date = timezone.now()
+        self.save()
+
+    def __str__(self):
+        return str(self.customer)
+
+    def results_by_fund(self):
+        return self.fund_recent_value - self.fund_acquired_value
+
+    def cust_number(self):
+        return self.customer.cust_number
